@@ -36,7 +36,7 @@ static void init()
 
 void check_memory_leak();
 
-void remove_empty()
+static void remove_empty()
 {
 	long long i;
 	long long k = 0;
@@ -55,7 +55,7 @@ void remove_empty()
 	remove_count = 0;
 }
 
-void add_info(void* ptr, char* fileName, size_t line)
+static void add_info(void* ptr, char* fileName, size_t line)
 {
 	long long i;
 	
@@ -95,7 +95,7 @@ void add_info(void* ptr, char* fileName, size_t line)
 	}
 }
 
-int remove_info(void* ptr, char* fileName, size_t line)
+static int remove_info(void* ptr, char* fileName, size_t line)
 {
 	int i;
 
