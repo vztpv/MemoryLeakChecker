@@ -28,10 +28,10 @@ static int inited = 0;
 
 static void init()
 {
+	capacity = 1024;
 	infoArr = malloc(sizeof(Info)*capacity);
 	count = 0;
 	remove_count = 0;
-	capacity = 1024;
 }
 
 void check_memory_leak();
@@ -95,7 +95,7 @@ void add_info(void* ptr, char* fileName, size_t line)
 	}
 }
 
-void remove_info(void* ptr, char* fileName, size_t line)
+int remove_info(void* ptr, char* fileName, size_t line)
 {
 	int i;
 
@@ -121,9 +121,8 @@ void remove_info(void* ptr, char* fileName, size_t line)
 	// remove?
 	{
 		infoArr[i].remove = 1;
-		strncpy(infoArr[i].free_fileName, fileName, strlen(fileName));
+		strncpy(infoArr[i].free_fileName, fileName, strlen(fileName) + 1);
 		infoArr[i].free_line = line;
-		infoArr[i].ptr = ptr;
 
 		remove_count++;
 	}
@@ -131,6 +130,8 @@ void remove_info(void* ptr, char* fileName, size_t line)
 	if (remove_count > 1024) {
 		remove_empty();
 	}
+
+	return 1;
 }
 
 void* myMalloc(size_t size, char* fileName, size_t line)
