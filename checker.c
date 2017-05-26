@@ -5,8 +5,8 @@
 
 #define FILE_NAME_SIZE 256
 
-const char* INFO_FILE_NAME = "info.txt"; // to do
-const char* RESULT_FILE_NAME = "info_result.txt";
+char* INFO_FILE_NAME = "info.txt"; // to do
+char* RESULT_FILE_NAME = "info_result.txt";
 
 typedef struct _Info
 {
@@ -16,7 +16,6 @@ typedef struct _Info
 	char free_fileName[FILE_NAME_SIZE];
 	long long free_line;
 	int remove;
-	int is_print;
 } Info;
 
 
@@ -48,7 +47,7 @@ static void remove_empty()
 		else {
 			infoArr[k] = infoArr[i];
 			k++;
-		}
+		}	
 	}
 
 	count = k;
@@ -78,12 +77,12 @@ static void add_info(void* ptr, char* fileName, size_t line)
 			temp[i] = infoArr[i];
 		}
 		free(infoArr);
+		infoArr = temp;
 	}
 	
 	// add
 	{
 		Info temp;
-		temp.is_print = 0;
 		temp.remove = 0;
 		strncpy(temp.malloc_fileName, fileName, strlen(fileName)+1);
 		temp.malloc_line = line;
@@ -155,17 +154,31 @@ void myFree(void* ptr, char* fileName, size_t line)
 
 void check_memory_leak()
 {
+	if (NULL == infoArr) {
+		return;
+	}
+
 	remove_empty();
 	{
+		long long i;
 		FILE* file = fopen(RESULT_FILE_NAME, "wt");
-		int i;
+		if (!file) { printf("file open error in check memory leak function!\n"); return; }
+		
+		
+		fprintf(stdout, "count %lld\n", count);
 
 		for (i = 0; i < count; ++i) {
 			fprintf(file, "malloc_fileName : %s ", infoArr[i].malloc_fileName);
 			fprintf(file, "malloc_fileLine : %lld\n", infoArr[i].malloc_line);
+			fprintf(stdout, "malloc_fileName : %s ", infoArr[i].malloc_fileName);
+			fprintf(stdout, "malloc_fileLine : %lld\n", infoArr[i].malloc_line);
 		}
 		
 		fclose(file);
+		
+		free(infoArr);
+		infoArr = NULL;
+		inited = 0;
 	}
 }
 
